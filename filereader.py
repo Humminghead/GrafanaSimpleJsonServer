@@ -7,7 +7,10 @@ class BaseFileReader():
 
         if path != "":
             with open(path, 'r') as file:
-                content = file.read()
+                try:
+                    content = file.read()
+                except UnicodeDecodeError as e:
+                    print(e.reason)
             file.close()
 
         return content

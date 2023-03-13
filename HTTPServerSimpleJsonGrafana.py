@@ -58,14 +58,15 @@ def run(worker: MainWorker):
 
 
 def main(argv):
-    helpStr = 'Usage: HTTPServerSimpleJsonGrafana.py -d <inputfiles_dir> --ip=127.0.0.1 --port=3003'
+    helpStr = 'Usage: HTTPServerSimpleJsonGrafana.py -d <inputfiles_dir> --ip=127.0.0.1 --port=3003 --extension=.out'
 
     json_reader = JsonReader()
     json_processor = JsonDataProcessor()
     worker = MainWorker(json_reader, json_processor)
 
     try:
-        opts, args = getopt.getopt(argv, "hd:i:p:", ["idir=", "ip=", "port="])
+        opts, args = getopt.getopt(
+            argv, "hd:i:p:e:", ["idir=", "ip=", "port=", "extension="])
     except:
         sys.exit(2)
 
@@ -76,6 +77,7 @@ def main(argv):
     path = ''
     ip = '127.0.0.1'
     port = 3003
+    fileExt: str = ''
 
     for opt, arg in opts:
         if opt == '-h':
@@ -87,8 +89,11 @@ def main(argv):
             ip = arg
         elif opt in ("-p", "--port"):
             port = int(arg)
+        elif opt in ("-e", "--extension"):
+            fileExt = str(arg)
 
     worker.json_reader.setScanPath(path)
+    worker.json_reader.setFileExt(fileExt)
     handler = HttpGetHandler
     httpd = HTTPServer((ip, port), handler)
     worker.mediator = ConcreteMediator(handler, json_reader, json_processor)

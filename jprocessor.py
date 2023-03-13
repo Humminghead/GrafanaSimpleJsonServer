@@ -54,7 +54,7 @@ class JsonDataProcessor:
                     else:
                         jval = 0.0
 
-                    if(flatJ.__contains__(valTarget)):
+                    if(flatJ.__contains__('@timestamp')):
                         jtime = flatJ['@timestamp']*1000
                     else:
                         jval = int(time.time()*1000)
