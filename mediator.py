@@ -66,6 +66,8 @@ class ConcreteMediator(Mediator):
                 sender.sendQueryResponce(json.loads(responceData))
             except json.JSONDecodeError as e:
                 print("JSONDecodeError:", e.doc)
+            except BrokenPipeError as e:
+                print(e.errno, e.strerror, e.filename, e.filename2, e.args)
 
 
 class BaseComponent:
