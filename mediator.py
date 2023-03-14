@@ -3,22 +3,22 @@ import json
 
 class MediatorEvent():
     def __init__(self, type: str, val: str, intervalMs=0) -> None:
-        self.mType = type
-        self.mValue = val
-        self.mIntervalMs = intervalMs
+        self.__mType = type
+        self.__mValue = val
+        self.__mIntervalMs = intervalMs
 
     def type(self):
-        return self.mType
+        return self.__mType
 
     def value(self):
-        return self.mValue
+        return self.__mValue
 
     def intervalMs(self):
-        return self.mIntervalMs
+        return self.__mIntervalMs
 
-    mType = str
-    mValue = str
-    mIntervalMs = int
+    __mType = str
+    __mValue = str
+    __mIntervalMs = int
 
 
 class Mediator():
