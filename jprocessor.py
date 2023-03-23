@@ -30,7 +30,7 @@ class JsonDataProcessor:
 
             values = values[:-1] + "]"
             return json.loads(values.encode())
-        return json.loads("")
+        return json.loads("[]")
 
     def getTagetData(self, inData: list, eventData: str):
         values = json.loads(eventData)
@@ -51,13 +51,14 @@ class JsonDataProcessor:
 
                     if(flatJ.__contains__(valTarget)):
                         jval = flatJ[valTarget]
-                    else:
-                        jval = 0.0
+
+                    if jval == None:
+                        return (targetString + r"]}]")
 
                     if(flatJ.__contains__('@timestamp')):
                         jtime = flatJ['@timestamp']*1000
                     else:
-                        jval = int(time.time()*1000)
+                        jtime = int(time.time()*1000)
 
                     if (type(jval) is float):
                         targetString += "[" + \
