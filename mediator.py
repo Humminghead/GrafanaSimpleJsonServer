@@ -39,14 +39,9 @@ class ConcreteMediator(Mediator):
             self._jproc.mediator = self
 
     def notify(self, sender: object, event: MediatorEvent) -> None:
-        # print(event)
+        data = list()
 
-        if event.intervalMs() != 0:
-            data = self._reader.readDataInInterval(event.intervalMs(), True)
-        else:
-            data = self._reader.getData()
-
-        # self._reader.clearData()
+        data = self._reader.readDataInInterval(event.intervalMs()/1000)
 
         if event.type() == 'search_global':
             if len(data) > 0:
@@ -54,11 +49,12 @@ class ConcreteMediator(Mediator):
                 metricsArray = self._jproc.listDataRecords(data[-1])
                 sender.sendSearchResponce(metricsArray)
             else:
-                print("Json reader has no read data!")
+                print("Json reader has no data to read!")
+                sender.sendSearchResponce(json.loads("[]"))
 
         if event.type() == 'search_target':
             print("Event search_target isn't supported!")
-            # todo
+            sender.sendSearchResponce(json.loads("[]"))
 
         if event.type() == 'query_targets':
             responceData = self._jproc.getTagetData(data, event.value())
