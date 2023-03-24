@@ -61,7 +61,7 @@ def run(worker: MainWorker):
 
 
 def main(argv):
-    helpStr = 'Usage: HTTPServerSimpleJsonGrafana.py -d <inputfiles_dir> --ip=127.0.0.1 --port=3003 --extension=.json --max_records_count=1000 --read_interval=1'
+    helpStr = 'Usage: HTTPServerSimpleJsonGrafana.py -d <inputfiles_dir> --ip=127.0.0.1 --port=3003 --extension=.json --max_records_count=1000 --read_interval=1.0'
 
     json_reader = JsonReader()
     json_processor = JsonDataProcessor()
@@ -82,7 +82,7 @@ def main(argv):
     port = 3003
     fileExt: str = '.json'
     maxRecordsCount: int = 0
-    readInterval: int = 1
+    readInterval: float = 1
 
     for opt, arg in opts:
         if opt == '-h':
@@ -99,7 +99,7 @@ def main(argv):
         elif opt in ("-c", "--max_records_count"):
             maxRecordsCount = int(arg)
         elif opt in ("-r", "--read_interval"):
-            readInterval = int(arg)
+            readInterval = float(arg)
 
     worker.json_reader.setScanPath(path)
     worker.json_reader.setFileExt(fileExt)

@@ -44,7 +44,7 @@ class JsonDataProcessor:
                 targetString += r']},'
             else:
                 for data in inData:
-                    flatJ = self.flatJson(data)
+                    flatJ = self.flatJson(data.mJson)
                     valTarget = val.get('target')
                     jval = None
                     jtime = None
@@ -58,7 +58,7 @@ class JsonDataProcessor:
                     if(flatJ.__contains__('@timestamp')):
                         jtime = flatJ['@timestamp']*1000
                     else:
-                        jtime = int(time.time()*1000)
+                        jtime = data.mTime
 
                     if (type(jval) is float):
                         targetString += "[" + \

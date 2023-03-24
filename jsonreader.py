@@ -65,7 +65,7 @@ class JsonReader(BaseFileReader, BaseComponent):
                 continue
 
             if(timestamp - intervalS < timestamp < timestamp + intervalS):
-                result.append(jItem.mJson)
+                result.append(jItem)
 
         self.mJsonDataMutex.release()
         return result
@@ -105,10 +105,10 @@ class JsonReader(BaseFileReader, BaseComponent):
     def GetDataRecordsMaxCount(self) -> int:
         return self.mJsonDataRecordsMaxCount
 
-    def SetScanInterval(self, seconds: int):
+    def SetScanInterval(self, seconds: float):
         self.scanInterval = seconds
 
-    def GetScanInterval(self) -> int:
+    def GetScanInterval(self) -> float:
         return self.scanInterval
 
     mPath = str
@@ -117,5 +117,5 @@ class JsonReader(BaseFileReader, BaseComponent):
     mJsonDataRecordsMaxCount = 0
     isActive = True
     enableDeleting = True
-    scanInterval = 1
+    scanInterval = 1.0
     mJsonDataMutex = threading.Lock()
