@@ -16,8 +16,10 @@ class BaseFileReader():
         return content
 
     def listDirectory(self, path):
-        # print(path)
-        return os.listdir(path)
+        try:
+            return os.listdir(path)
+        except FileNotFoundError as e:
+            print(e)
 
     def deleteFile(self, path):
         os.remove(path)

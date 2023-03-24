@@ -27,6 +27,9 @@ class MainWorker(BaseComponent):
 
         while self.isActive:
             # print("Do JOB")
+            if self.json_reader.isActive == False:
+                self.isActive = False
+                break
             time.sleep(1)
 
         self.httpd.shutdown()
@@ -58,7 +61,7 @@ def run(worker: MainWorker):
 
 
 def main(argv):
-    helpStr = 'Usage: HTTPServerSimpleJsonGrafana.py -d <inputfiles_dir> --ip=127.0.0.1 --port=3003 --extension=.out'
+    helpStr = 'Usage: HTTPServerSimpleJsonGrafana.py -d <inputfiles_dir> --ip=127.0.0.1 --port=3003 --extension=.json --max_records_count=1000 --read_interval=1.0'
 
     json_reader = JsonReader()
     json_processor = JsonDataProcessor()
@@ -66,7 +69,7 @@ def main(argv):
 
     try:
         opts, args = getopt.getopt(
-            argv, "hd:i:p:e:", ["idir=", "ip=", "port=", "extension="])
+            argv, "hd:i:p:e:c:r:", ["idir=", "ip=", "port=", "extension=", "max_records_count=", "read_interval="])
     except:
         sys.exit(2)
 
@@ -77,7 +80,9 @@ def main(argv):
     path = ''
     ip = '127.0.0.1'
     port = 3003
-    fileExt: str = ''
+    fileExt: str = '.json'
+    maxRecordsCount: int = 0
+    readInterval: float = 1
 
     for opt, arg in opts:
         if opt == '-h':
@@ -91,9 +96,16 @@ def main(argv):
             port = int(arg)
         elif opt in ("-e", "--extension"):
             fileExt = str(arg)
+        elif opt in ("-c", "--max_records_count"):
+            maxRecordsCount = int(arg)
+        elif opt in ("-r", "--read_interval"):
+            readInterval = float(arg)
 
     worker.json_reader.setScanPath(path)
     worker.json_reader.setFileExt(fileExt)
+    worker.json_reader.SetDataRecordsMaxCount(maxRecordsCount)
+    worker.json_reader.SetScanInterval(readInterval)
+
     handler = HttpGetHandler
     httpd = HTTPServer((ip, port), handler)
     worker.mediator = ConcreteMediator(handler, json_reader, json_processor)

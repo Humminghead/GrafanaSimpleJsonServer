@@ -1,26 +1,30 @@
 import os
 import json
 import time
+from datetime import timezone, datetime
 from filereader import BaseFileReader
 from mediator import BaseComponent
 import threading
+from jsonrdata import JsonData
 
 
 class JsonReader(BaseFileReader, BaseComponent):
     def __init__(self, scanPath='', fileExt='.out'):
         self.mPath = scanPath
         self.mJsonData = list()
-
         self.setFileExt(fileExt)
-
         self.mJsonFileExtension = fileExt
 
     def readFiles(self):
         while self.isActive:
             files = self.listDirectory(self.mPath)
-            # print(files)
+
+            if files == None:
+                self.isActive = False
+                return
 
             self.mJsonDataMutex.acquire()
+
             for n in range(len(files)):
                 file = files[n]
                 fullPath = self.mPath+"/"+file
@@ -28,7 +32,14 @@ class JsonReader(BaseFileReader, BaseComponent):
                     data = self.readFile(fullPath)
                     if data:
                         try:
-                            self.mJsonData.append(json.loads(data.encode()))
+                            fileTimeS = datetime.now().timestamp()
+                            jData = json.loads(data.encode())
+                            mJsonDataLen = len(self.mJsonData)
+                            if self.mJsonDataRecordsMaxCount > 0 and mJsonDataLen >= self.mJsonDataRecordsMaxCount:
+                                self.mJsonData.pop(0)
+                            self.mJsonData.append(JsonData(fileTimeS, jData))
+                        except AttributeError as e:
+                            print(e)
                         except TypeError as e:
                             print(e)
                         except json.JSONDecodeError as e:
@@ -42,21 +53,19 @@ class JsonReader(BaseFileReader, BaseComponent):
             # self.mediator.notify(self, "DATA")
             time.sleep(self.scanInterval)
 
-    def readDataInInterval(self, intervalMs: int, erase: bool = False) -> list:
-        if intervalMs == 0:
-            return self.mJsonData
-
-        intervalS = intervalMs/1000
+    def readDataInInterval(self, intervalS: float) -> list:
+        result: list() = list()
 
         self.mJsonDataMutex.acquire()
-        result: list() = list()
-        for d in self.mJsonData:
-            timestamp = d.get('@timestamp')
+        for d in range(len(self.mJsonData)):
+            jItem = self.mJsonData[d]
+            timestamp = jItem.mTime
+
+            if timestamp == None:
+                continue
 
             if(timestamp - intervalS < timestamp < timestamp + intervalS):
-                result.append(d)
-                if erase:
-                    self.mJsonData.remove(d)
+                result.append(jItem)
 
         self.mJsonDataMutex.release()
         return result
@@ -87,10 +96,26 @@ class JsonReader(BaseFileReader, BaseComponent):
     def getFileExt(self):
         return self.mJsonFileExtension
 
+    def SetEnableDeleting(self, enable: bool):
+        self.enableDeleting = enable
+
+    def SetDataRecordsMaxCount(self, count: int):
+        self.mJsonDataRecordsMaxCount = count
+
+    def GetDataRecordsMaxCount(self) -> int:
+        return self.mJsonDataRecordsMaxCount
+
+    def SetScanInterval(self, seconds: float):
+        self.scanInterval = seconds
+
+    def GetScanInterval(self) -> float:
+        return self.scanInterval
+
     mPath = str
     mJsonData = list
     mJsonFileExtension = str
+    mJsonDataRecordsMaxCount = 0
     isActive = True
     enableDeleting = True
-    scanInterval = 1
+    scanInterval = 1.0
     mJsonDataMutex = threading.Lock()
