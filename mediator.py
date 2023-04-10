@@ -46,7 +46,7 @@ class ConcreteMediator(Mediator):
         if event.type() == 'search_global':
             if len(data) > 0:
                 # list records by last element
-                metricsArray = self._jproc.listDataRecords(data[-1])
+                metricsArray = self._jproc.listDataRecords(data[-1].mJson)
                 sender.sendSearchResponce(metricsArray)
             else:
                 print("Json reader has no data to read!")
