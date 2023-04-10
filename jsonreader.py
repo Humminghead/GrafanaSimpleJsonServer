@@ -64,7 +64,7 @@ class JsonReader(BaseFileReader, BaseComponent):
             if timestamp == None:
                 continue
 
-            if(timestamp - intervalS < timestamp < timestamp + intervalS):
+            if(timestamp - intervalS <= timestamp <= timestamp + intervalS):
                 result.append(jItem)
 
         self.mJsonDataMutex.release()
