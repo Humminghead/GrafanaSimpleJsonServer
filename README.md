@@ -33,10 +33,16 @@ For example:
 
 ```json
 {
-  "@timestamp": 1631541610,
-  "counter0": 234,
-  "counter1": 7852
-  "counter2": 29  
+   "@timestamp":1631541610,
+   "data":{
+      "counter0":234,
+      "counter1":7852,
+      "counter2":29
+   }
 }
 ```
 If the `@timestamp` field exists at the root of the user data, then the moment the file has been read from disk and converted to a JSON object, the time from the `@timestamp` will be captured as the timestamp of the data. Othervise system time will be used.
+
+## About names in Grafana
+
+After the data is loaded in grafana the data names are shown as flatten names. For example, for data above: `@timestamp`, `data_counter0`,`data_counter1` and etc.
