@@ -107,7 +107,12 @@ def main(argv):
     worker.json_reader.SetScanInterval(readInterval)
 
     handler = HttpGetHandler
-    httpd = HTTPServer((ip, port), handler)
+    try:
+        httpd = HTTPServer((ip, port), handler)
+    except OSError as e:
+        print(e.args)
+        exit()
+
     worker.mediator = ConcreteMediator(handler, json_reader, json_processor)
     worker.httpd = httpd
 
