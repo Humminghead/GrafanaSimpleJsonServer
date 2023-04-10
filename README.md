@@ -9,7 +9,7 @@ Copy files to the server and run with parameters:
 - -d - directory where JSON files are stored
 - --ip - server address
 - --port - server port
-- --extension - files extension
+- --extension - file name suffix (by default: '.json')
 
 ***default values are shown above***
 
@@ -23,4 +23,4 @@ Copy files to the server and run with parameters:
   "counter2": 29  
 }
 ```
-TODO
+If the "@timestamp" field exists at the root of the user data, then the moment the file has been read from disk and converted to a JSON object, the time from the "@timestamp" will be captured as the timestamp of the data.
