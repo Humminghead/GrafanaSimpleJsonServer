@@ -41,7 +41,7 @@ For example:
    }
 }
 ```
-If the `@timestamp` field exists at the root of the user data, then the moment the file has been read from disk and converted to a JSON object, the time from the `@timestamp` will be captured as the timestamp of the data. Othervise system time will be used.
+If the `@timestamp`([Unix Timestamp](https://www.epochconverter.com/)) field exists at the root of the user data, at the moment the file has been read from disk and converted to a JSON object, the time from the `@timestamp` will be captured as the timestamp of the data. Othervise system time will be used.
 
 ## About names in Grafana
 
